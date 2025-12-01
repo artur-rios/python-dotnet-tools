@@ -1,0 +1,48 @@
+# Python artifacts
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Packaging
+build/
+dist/
+*.egg-info/
+.eggs/
+
+# Virtual environments
+.venv/
+venv/
+ENV/
+env/
+
+# IDE / Editor
+.idea/
+.vscode/
+*.swp
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Coverage / Testing
+.coverage
+coverage/
+htmlcov/
+.pytest_cache/
+
+# Caches
+.cache/
+pip-wheel-metadata/
+
+# Local environment/configs
+.env
+*.env
+.python-dotenv*
+
+# Dotnet build outputs (for convenience when used alongside .NET repos)
+**/bin/
+**/obj/
+

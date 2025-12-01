@@ -1,0 +1,36 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "python-dotnet-tools"
+version = "0.1.0"
+description = "CLI helpers to build, clean, test, and bump versions for .NET projects"
+readme = "README.md"
+requires-python = ">=3.11"
+authors = [{ name = "Your Name", email = "you@example.com" }]
+license = { text = "MIT" }
+keywords = ["dotnet", "cli", "build", "test", "coverage"]
+classifiers = [
+  "Programming Language :: Python :: 3",
+  "License :: OSI Approved :: MIT License",
+  "Operating System :: OS Independent",
+]
+# No runtime deps; these scripts call external tools (dotnet, reportgenerator) which must be installed separately.
+dependencies = []
+
+[project.urls]
+Homepage = "https://github.com/your/repo"
+
+[project.scripts]
+python-dotnet-tools = "cli:main"
+python-dotnet-build = "commands.build:main"
+python-dotnet-clean = "commands.clean:main"
+python-dotnet-test = "commands.test:main"
+python-dotnet-bump = "commands.bump:main"
+python-dotnet-tag = "commands.tag:main"
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+packages = ["commands"]
+py-modules = ["cli"]
