@@ -9,6 +9,9 @@ The CLI exposes a single dispatcher command `python-dotnet-tools` and direct con
 - `python-dotnet-test`
 - `python-dotnet-bump`
 - `python-dotnet-tag`
+- `python-dotnet-init-lib`
+- `python-dotnet-init-min`
+- `python-dotnet-init-proj`
 
 ## Features
 
@@ -17,6 +20,7 @@ The CLI exposes a single dispatcher command `python-dotnet-tools` and direct con
 - Run tests and generate HTML coverage reports (via `reportgenerator`)
 - Bump a project version in `.csproj` (semantic versioning helpers)
 - Create and optionally push annotated git tags from `.csproj` version
+- Scaffold .NET repository layouts and projects (init-lib, init-min, init-proj)
 
 ## Folder structure
 
@@ -31,7 +35,11 @@ python-dotnet-tools/
       ├─ clean.py             # remove bin/ and obj/
       ├─ test.py              # run tests + coverage
       ├─ bump.py              # bump <Version> in .csproj
-      └─ tag.py               # create git tag from version
+    ├─ tag.py               # create git tag from version
+    ├─ init_lib.py          # scaffold NuGet-ready library repo
+    ├─ init_min.py          # scaffold minimal library repo
+    ├─ init_proj.py         # scaffold single project folder
+    └─ _data/               # embedded templates and parameters
 ```
 
 ## Prerequisites
@@ -90,7 +98,7 @@ Notes:
 
 ```cmd
 python-dotnet-tools --help
-python-dotnet-tools <build|clean|test|bump|tag> [args]
+python-dotnet-tools <build|clean|test|bump|tag|init-lib|init-min|init-proj> [args]
 ```
 
 ### Build
@@ -189,6 +197,26 @@ python-dotnet-tag --push --remote upstream    # push to custom remote
 Notes:
 
 - If tag already exists, the command aborts
+
+### Scaffold
+
+Generate repository scaffolds and project files using embedded templates.
+
+Examples:
+
+```cmd
+# NuGet-ready repo: src/docs/tests, LICENSE, .editorconfig, .gitignore, solution, project (in src), tests project
+python-dotnet-init-lib --root MyLib --solution MyLib --project MyLib.Core --author "Jane Doe" --company "Jane Doe" --description "My sample library" --version 0.1.0 --packageId MyLib.Core --repositoryUrl https://github.com/user/MyLib
+
+# Minimal repo: src/docs/tests, LICENSE, no NuGet metadata, project under src/<Project>/
+python-dotnet-init-min --root MyLib --solution MyLib --project MyLib --author "Jane Doe" --description "My library"
+
+# Single project folder with a csproj
+python-dotnet-init-proj --name Utils                    # minimal (default)
+python-dotnet-init-proj --name Package --nuget          # NuGet template with blank metadata
+```
+
+You can also pass a JSON file (mutually exclusive with flags) to `init-lib`/`init-min` with the same fields used by the original PowerShell tool (see `commands/_data/parameters/init-parameters.json`).
 
 ## Configuration
 

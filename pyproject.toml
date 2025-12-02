@@ -29,8 +29,17 @@ python-dotnet-clean = "commands.clean:main"
 python-dotnet-test = "commands.test:main"
 python-dotnet-bump = "commands.bump:main"
 python-dotnet-tag = "commands.tag:main"
+python-dotnet-init-lib = "commands.init_lib:main"
+python-dotnet-init-min = "commands.init_min:main"
+python-dotnet-init-proj = "commands.init_proj:main"
 
 [tool.setuptools]
 package-dir = {"" = "src"}
-packages = ["commands"]
+packages = ["commands", "commands._data"]
 py-modules = ["cli"]
+
+[tool.setuptools.package-data]
+"commands._data" = [
+  "templates/*.template",
+  "parameters/*.json"
+]
