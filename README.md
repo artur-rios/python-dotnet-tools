@@ -281,6 +281,6 @@ python -m pip install pytest
 pytest -q
 ```
 
-## License
+## Legal Details
 
-MIT (see `pyproject.toml`). A copy of the license is available at `LICENSE` in the repository.
+This project is licensed under the [MIT License](https://en.wikipedia.org/wiki/MIT_License). A copy of the license is available at [LICENSE](./LICENSE) in the repository.
