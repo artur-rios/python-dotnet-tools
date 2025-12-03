@@ -1,6 +1,6 @@
 # Python Dotnet Tools
 
-A lightweight Python CLI that streamlines common .NET project workflows: build, clean, test with coverage, bump versions, and create git tags.
+A lightweight Python CLI that streamlines common .NET project workflows: build, clean, test with coverage, bump versions, create git tags and scaffold projects.
 
 The CLI exposes a single dispatcher command `python-dotnet-tools` and direct convenience commands for each action:
 
@@ -26,20 +26,45 @@ The CLI exposes a single dispatcher command `python-dotnet-tools` and direct con
 
 ```txt
 python-dotnet-tools/
+├─ LICENSE
 ├─ pyproject.toml
 ├─ README.md
-└─ src/
-   ├─ cli.py                  # main dispatcher for python-dotnet-tools
-   └─ commands/
-      ├─ build.py             # build solution(s)
-      ├─ clean.py             # remove bin/ and obj/
-      ├─ test.py              # run tests + coverage
-      ├─ bump.py              # bump <Version> in .csproj
-    ├─ tag.py               # create git tag from version
-    ├─ init_lib.py          # scaffold NuGet-ready library repo
-    ├─ init_min.py          # scaffold minimal library repo
-    ├─ init_proj.py         # scaffold single project folder
-    └─ _data/               # embedded templates and parameters
+├─ src/
+│  ├─ __init__.py
+│  ├─ cli.py                       # main dispatcher for python-dotnet-tools
+│  ├─ commands/
+│  │  ├─ __init__.py
+│  │  ├─ build.py                  # build solution(s)
+│  │  ├─ clean.py                  # remove bin/ and obj/
+│  │  ├─ test.py                   # run tests + coverage
+│  │  ├─ bump.py                   # bump <Version> in .csproj
+│  │  ├─ tag.py                    # create git tag from version
+│  │  ├─ init_lib.py               # scaffold NuGet-ready library repo
+│  │  ├─ init_min.py               # scaffold minimal library repo
+│  │  ├─ init_proj.py              # scaffold single project folder
+│  │  └─ _data/
+│  │     ├─ __init__.py
+│  │     ├─ parameters/
+│  │     │  └─ init-parameters.json
+│  │     └─ templates/
+│  │        ├─ LICENSE.MIT.template
+│  │        ├─ project.minimal.csproj.template
+│  │        ├─ project.nuget.csproj.template
+│  │        ├─ project.Tests.csproj.template
+│  │        └─ solution.sln.template
+│  └─ python_dotnet_tools.egg-info/
+│     ├─ dependency_links.txt
+│     ├─ entry_points.txt
+│     ├─ PKG-INFO
+│     ├─ SOURCES.txt
+│     └─ top_level.txt
+└─ tests/
+  ├─ conftest.py
+  ├─ mock/
+  ├─ test_suite_bash_lib.py
+  ├─ test_suite_bash_min.py
+  ├─ test_suite_cmd_lib.py
+  └─ test_suite_cmd_min.py
 ```
 
 ## Prerequisites
@@ -216,13 +241,7 @@ python-dotnet-init-proj --name Utils                    # minimal (default)
 python-dotnet-init-proj --name Package --nuget          # NuGet template with blank metadata
 ```
 
-You can also pass a JSON file (mutually exclusive with flags) to `init-lib`/`init-min` with the same fields used by the original PowerShell tool (see `commands/_data/parameters/init-parameters.json`).
-
-## Configuration
-
-No project-specific config file is required.
-
-- You may keep local environment variables in a `.env` file for other tools; this project does not read it.
+You can also pass a JSON file (mutually exclusive with flags) to `init-lib`/`init-min` with the same fields of the default json paramenters (see `commands/_data/parameters/init-parameters.json`).
 
 ## Development
 
@@ -241,6 +260,25 @@ Run commands locally:
 ```cmd
 python -m src.cli --help
 python-dotnet-tools build --help
+```
+
+## Tests
+
+Pytest-based tests live under `tests/`. The end-to-end suites run real external tools (`dotnet`, `reportgenerator`, `git`) and validate actual side effects (build outputs, cleaned folders, coverage artifacts, version bumps, and git tags).
+
+### Test Suites Overview
+
+- `test_suite_cmd_lib.py`: End-to-end via dispatcher `cli.main` using `init-lib`. Scaffolds a full repo under a unique mock path, then exercises `build`, `clean`, `test` (with coverage via `reportgenerator`), `bump` (version updates in `.csproj`), `tag` (annotated git tag from version), and `init-proj` (adds an extra minimal project). Validates created files, directories, coverage HTML, and git tag presence.
+- `test_suite_bash_lib.py`: End-to-end using direct command entrypoints (`commands.*.main`) with `init-lib`. Creates a unique mock repo, then directly calls `build`, `clean`, `test` with coverage, `bump`, `tag`, and `init-proj`. Asserts scaffold correctness, test/coverage outputs, version changes, and tag creation.
+- `test_suite_cmd_min.py`: End-to-end via dispatcher using `init-min` to scaffold a minimal repo. Adds a small xUnit tests project (with `coverlet.collector`) to enable coverage, then runs `build`, `clean`, `test` with coverage, `bump` (explicit version on minimal csproj), `tag`, and `init-proj`.
+- `test_suite_bash_min.py`: End-to-end using direct entrypoints with `init-min`. Similarly adds a tests project, then runs `build`, `clean`, `test`, `bump` (explicit version), `tag`, and `init-proj`, validating artifacts throughout.
+
+Run tests:
+
+```pwsh
+python -m pip install -e .
+python -m pip install pytest
+pytest -q
 ```
 
 ## License
