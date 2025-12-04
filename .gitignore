@@ -46,3 +46,5 @@ pip-wheel-metadata/
 **/bin/
 **/obj/
 
+# Mock for tests
+mock/
