@@ -174,7 +174,17 @@ def main(argv: list[str] | None = None) -> int:
     log("[OK] Config files copied")
 
     log("[STEP] 5/9 Generate README and LICENSE")
-    readme = f"# {solution}\n\n{description}\n"
+    readme_tpl = _read_text("commands._data", "templates/README.md.template")
+    readme = (
+        readme_tpl
+        .replace("__SOLUTION_NAME__", solution or "")
+        .replace("__PROJECT_NAME__", project or "")
+        .replace("__DESCRIPTION__", description or "")
+        .replace("__REPOSITORY_URL__", repo_url or "")
+        .replace("__PACKAGE_ID__", (package_id or ""))
+        .replace("__AUTHOR__", author or "")
+        .replace("__COMPANY__", company or "")
+    )
     (root_path / "README.md").write_text(readme, encoding="utf-8")
     year = datetime.now().year
     license_text = license_tpl.replace("__YEAR__", str(year)).replace("__AUTHOR__", author)

@@ -107,7 +107,13 @@ def main(argv: list[str] | None = None) -> int:
     (root_path / ".wakatime-project").write_text(project, encoding="utf-8")
     log("[INFO] Wrote .wakatime-project")
 
-    readme = f"# {solution}\n\n{description}\n"
+    readme_tpl = _read_text("commands._data", "templates/README.md.template")
+    readme = (
+        readme_tpl
+        .replace("__SOLUTION_NAME__", solution or "")
+        .replace("__PROJECT_NAME__", project or "")
+        .replace("__DESCRIPTION__", description or "")
+    )
     log("[STEP] 3/7 Generate README")
     (root_path / "README.md").write_text(readme, encoding="utf-8")
     log("[OK] README created")
