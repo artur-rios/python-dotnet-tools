@@ -230,10 +230,10 @@ Generate repository scaffolds and project files using embedded templates.
 Examples:
 
 ```cmd
-# NuGet-ready repo: src/docs/tests, LICENSE, .editorconfig, .gitignore, solution, project (in src), tests project
+# NuGet-ready repo: src/tests, LICENSE, .editorconfig, .gitignore, solution, project (in src), tests project
 python-dotnet-init-lib --root MyLib --solution MyLib --project MyLib.Core --author "Jane Doe" --company "Jane Doe" --description "My sample library" --version 0.1.0 --packageId MyLib.Core --repositoryUrl https://github.com/user/MyLib
 
-# Minimal repo: src/docs/tests, LICENSE, no NuGet metadata, project under src/<Project>/
+# Minimal repo: src/tests, LICENSE, no NuGet metadata, project under src/<Project>/
 python-dotnet-init-min --root MyLib --solution MyLib --project MyLib --author "Jane Doe" --description "My library"
 
 # Single project folder with a csproj

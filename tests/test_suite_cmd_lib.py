@@ -45,9 +45,7 @@ def _init_git_repo(repo_root: pathlib.Path):
     # Configure identity locally so commit works
     _run(["git", "config", "user.email", "test@example.com"])
     _run(["git", "config", "user.name", "Test User"])
-    # Ensure a file exists to commit
-    from conftest import write_file as _wf
-    _wf(repo_root / "README.md", "Temporary repo for tests\n")
+    # README.md already exists from init command
     _run(["git", "add", "."])
     _run(["git", "commit", "-m", "init"])
 

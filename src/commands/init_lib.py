@@ -147,12 +147,10 @@ def main(argv: list[str] | None = None) -> int:
     log("[STEP] 2/9 Create directory structure")
     _ensure_dir(root_path)
     src_dir = root_path / "src"
-    docs_dir = root_path / "docs"
     tests_dir = root_path / "tests"
-    for d in (src_dir, docs_dir, tests_dir):
+    for d in (src_dir, tests_dir):
         _ensure_dir(d)
-    (docs_dir / ".gitkeep").write_text("", encoding="utf-8")
-    log("[OK] Created directories: src, docs, tests")
+    log("[OK] Created directories: src, tests")
 
     # wakatime
     (root_path / ".wakatime-project").write_text(project, encoding="utf-8")
@@ -185,6 +183,9 @@ def main(argv: list[str] | None = None) -> int:
         .replace("__AUTHOR__", author or "")
         .replace("__COMPANY__", company or "")
     )
+    # Insert Versioning section after description for init-lib
+    versioning_section = "## Versioning\n\nSemantic Versioning (SemVer). Breaking changes result in a new major version. New methods or non-breaking behavior\nchanges increment the minor version; fixes or tweaks increment the patch.\n\n"
+    readme = readme.replace("## Build, test and publish", versioning_section + "## Build, test and publish")
     (root_path / "README.md").write_text(readme, encoding="utf-8")
     year = datetime.now().year
     license_text = license_tpl.replace("__YEAR__", str(year)).replace("__AUTHOR__", author)

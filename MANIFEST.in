@@ -1,0 +1,4 @@
+include README.md
+include LICENSE
+recursive-include src/commands/_data/templates *
+recursive-include src/commands/_data/parameters *.json

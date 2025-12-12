@@ -35,11 +35,16 @@ python-dotnet-init-proj = "commands.init_proj:main"
 
 [tool.setuptools]
 package-dir = {"" = "src"}
-packages = ["commands", "commands._data"]
 py-modules = ["cli"]
+
+[tool.setuptools.packages.find]
+where = ["src"]
 
 [tool.setuptools.package-data]
 "commands._data" = [
-  "templates/*.template",
-  "parameters/*.json"
+  "templates/*",
+  "parameters/*"
 ]
+
+[tool.setuptools.exclude-package-data]
+"*" = ["__pycache__", "*.pyc"]

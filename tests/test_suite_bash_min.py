@@ -51,8 +51,7 @@ def _init_git_repo(repo_root: pathlib.Path):
     _run(["git", "init"])  # in cwd
     _run(["git", "config", "user.email", "test@example.com"])
     _run(["git", "config", "user.name", "Test User"])
-    # ensure at least one file to commit
-    write_file(repo_root / "README.md", "Temporary repo for tests\n")
+    # README.md already exists from init command
     _run(["git", "add", "."])
     _run(["git", "commit", "-m", "init"])
 
@@ -125,7 +124,6 @@ def test_01_init_min_bash():
     proj_root = _scaffold_min_project()
     PROJ_ROOT = proj_root
     assert (proj_root / "src").exists()
-    assert (proj_root / "docs").exists()
     assert (proj_root / "tests").exists()
     # Solution and project
     assert (proj_root / "src" / "MinSuite.sln").exists()

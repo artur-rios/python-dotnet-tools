@@ -96,13 +96,11 @@ def main(argv: list[str] | None = None) -> int:
     log("[STEP] 2/7 Create directory structure")
     _ensure_dir(root_path)
     src_dir = root_path / "src"
-    docs_dir = root_path / "docs"
     tests_dir = root_path / "tests"
-    for d in (src_dir, docs_dir, tests_dir):
+    for d in (src_dir, tests_dir):
         _ensure_dir(d)
-    (docs_dir / ".gitkeep").write_text("", encoding="utf-8")
     (tests_dir / ".gitkeep").write_text("", encoding="utf-8")
-    log("[OK] Created directories: src, docs, tests (with .gitkeep)")
+    log("[OK] Created directories: src, tests (with .gitkeep)")
 
     (root_path / ".wakatime-project").write_text(project, encoding="utf-8")
     log("[INFO] Wrote .wakatime-project")

@@ -1,6 +1,8 @@
 import pathlib
 import subprocess
 import contextlib
+import shutil
+import pytest
 from typing import Callable, Optional, Tuple, Dict, Any
 
 class CallLog:
@@ -80,6 +82,31 @@ def mock_subprocess_run_dynamic(
 
 # Pretty test summary at the end of the run
 _TEST_DESCRIPTIONS: Dict[str, str] = {}
+
+
+@pytest.fixture(scope="session", autouse=True)
+def cleanup_mock_folder():
+    """Clean tests/mock folder completely before running tests."""
+    mock_dir = pathlib.Path(__file__).parent / "mock"
+    
+    # Remove directory and all contents if it exists
+    if mock_dir.exists():
+        def handle_remove_error(func, path, exc):
+            """Error handler for rmtree to force removal of read-only files."""
+            import os
+            import stat
+            if not os.access(path, os.W_OK):
+                os.chmod(path, stat.S_IWUSR | stat.S_IRUSR | stat.S_IXUSR)
+                func(path)
+            else:
+                raise
+        
+        try:
+            shutil.rmtree(mock_dir, onerror=handle_remove_error)
+        except Exception:
+            pass  # Silently ignore any remaining issues
+    
+    yield
 
 
 def pytest_collection_modifyitems(session, config, items):
