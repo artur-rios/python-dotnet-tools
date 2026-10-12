@@ -84,7 +84,7 @@ def load_params(ns: argparse.Namespace) -> dict:
 
     required = [
         "RootFolder", "SolutionName", "ProjectName", "Author", "Company",
-        "Description", "PackageId", "RepositoryUrl", "PackageLicenseExpression", "Version",
+        "Description", "PackageId", "RepositoryUrl", "Version",
     ]
     missing = [k for k in required if not str(params.get(k, "")).strip()]
     if missing:
@@ -160,7 +160,7 @@ def main(argv: list[str] | None = None) -> int:
     # Read embedded templates
     editorconfig = _read_text("commands._data", "templates/.editorconfig.template")
     gitignore = _read_text("commands._data", "templates/.gitignore.template")
-    license_tpl = _read_text("commands._data", "templates/LICENSE.MIT.template")
+    license_tpl = _read_text("commands._data", "templates/LICENSE.template")
     proj_tpl = _read_text("commands._data", "templates/project.nuget.csproj.template")
     sln_tpl = _read_text("commands._data", "templates/solution.sln.template")
     tests_tpl = _read_text("commands._data", "templates/project.Tests.csproj.template")
@@ -188,7 +188,7 @@ def main(argv: list[str] | None = None) -> int:
     readme = readme.replace("## Build, test and publish", versioning_section + "## Build, test and publish")
     (root_path / "README.md").write_text(readme, encoding="utf-8")
     year = datetime.now().year
-    license_text = license_tpl.replace("__YEAR__", str(year)).replace("__AUTHOR__", author)
+    license_text = license_tpl.replace("__YEAR__", str(year))
     (root_path / "LICENSE").write_text(license_text, encoding="utf-8")
     log("[OK] README and LICENSE created")
 

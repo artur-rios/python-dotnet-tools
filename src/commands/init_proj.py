@@ -47,7 +47,7 @@ def blank_nuget_metadata(content: str) -> str:
                .replace("__COMPANY__", ""))
     # Blank fixed metadata tags if present
     tags_to_blank = [
-        "PackageLicenseExpression", "PackageReadmeFile", "Authors", "Company",
+        "PackageLicenseFile", "PackageReadmeFile", "Authors", "Company",
         "Description", "PackageId", "Version", "RepositoryUrl"
     ]
     for tag in tags_to_blank:

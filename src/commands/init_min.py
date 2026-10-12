@@ -119,7 +119,7 @@ def main(argv: list[str] | None = None) -> int:
     log("[STEP] 4/7 Validate templates")
     editorconfig = _read_text("commands._data", "templates/.editorconfig.template")
     gitignore = _read_text("commands._data", "templates/.gitignore.template")
-    license_tpl = _read_text("commands._data", "templates/LICENSE.MIT.template")
+    license_tpl = _read_text("commands._data", "templates/LICENSE.template")
     proj_min_tpl = _read_text("commands._data", "templates/project.minimal.csproj.template")
     sln_tpl = _read_text("commands._data", "templates/solution.sln.template")
     log("[OK] All template files present")
@@ -128,7 +128,7 @@ def main(argv: list[str] | None = None) -> int:
     (root_path / ".editorconfig").write_text(editorconfig, encoding="utf-8")
     (root_path / ".gitignore").write_text(gitignore, encoding="utf-8")
     year = datetime.now().year
-    license_text = license_tpl.replace("__YEAR__", str(year)).replace("__AUTHOR__", author)
+    license_text = license_tpl.replace("__YEAR__", str(year))
     (root_path / "LICENSE").write_text(license_text, encoding="utf-8")
     log("[OK] Config and LICENSE created")
 
