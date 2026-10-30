@@ -1,11 +1,5 @@
 # Python Dotnet Tools
 
-> [!NOTE]
-> This is the real, open-source code of python-dotnet-tools. Its home is Forgejo, at
-> https://git.techcraftsmen.net/artur-rios/python-dotnet-tools; the copy on GitHub is a read-only mirror, for viewing only, and
-> its issues and pull requests are not followed. If you want to contribute, email me at
-> arturdev@duck.com.
-
 A lightweight Python CLI that streamlines common .NET project workflows: build, clean, test with coverage, bump versions, create git tags and scaffold projects.
 
 The CLI exposes a single dispatcher command `python-dotnet-tools` and direct convenience commands for each action:
@@ -286,6 +280,11 @@ python -m pip install -e .
 python -m pip install pytest
 pytest -q
 ```
+
+## Contributing
+
+The GitHub repository is a read-only mirror for the real, open-source code of python-dotnet-tools. Its home is Forgejo, at
+https://git.techcraftsmen.net/artur-rios/python-dotnet-tools. If you want to contribute, e-mail me at arturdev@duck.com.
 
 ## Legal Details
 
