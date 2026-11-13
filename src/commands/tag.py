@@ -17,7 +17,10 @@ Usage:
   python tag.py <path> --push --remote upstream
 """
 from __future__ import annotations
-import sys, pathlib, subprocess, xml.etree.ElementTree as ET
+import sys
+import pathlib
+import subprocess
+import xml.etree.ElementTree as ET
 from typing import Tuple
 
 

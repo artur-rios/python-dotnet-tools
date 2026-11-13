@@ -10,7 +10,11 @@ Bump project version script:
   - Only replaces numeric portion of existing <Version> tag; if missing inserts after <PackageId> line or first <PropertyGroup>
 """
 from __future__ import annotations
-import sys, re, shutil, datetime, pathlib
+import sys
+import re
+import shutil
+import datetime
+import pathlib
 
 STEP_TOTAL = 9
 

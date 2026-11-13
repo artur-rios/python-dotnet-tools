@@ -111,8 +111,7 @@ def test_02_build_cmd():
     rc = cli.main(["build", str(src_dir)])
     assert rc == 0
     # Verify build output exists for Debug/Release
-    sln = next(src_dir.glob("*.sln"))
-    proj_dir = next(src_dir.glob("*/"), src_dir)
+    next(src_dir.glob("*.sln"))  # StopIteration fails the test when src/ has no solution
     # Skip strict bin/obj verification due to project structure variability
 
 

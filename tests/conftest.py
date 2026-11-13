@@ -141,5 +141,5 @@ def pytest_terminal_summary(terminalreporter, exitstatus, config):
         for desc, label in results:
             terminalreporter.write_line(f"- {desc}: {label}")
         total = len(results)
-        passed = sum(1 for _, l in results if l == 'PASSED')
+        passed = sum(1 for _, label in results if label == 'PASSED')
         terminalreporter.write_sep("-", f"{passed} of {total} tests passed")

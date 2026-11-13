@@ -9,7 +9,9 @@ Usage:
   python build.py --configuration Debug  # build specific configuration (Debug or Release)
 """
 from __future__ import annotations
-import sys, pathlib, subprocess
+import sys
+import pathlib
+import subprocess
 from typing import cast
 
 
