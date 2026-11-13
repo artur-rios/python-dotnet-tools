@@ -174,7 +174,6 @@ def test_05_bump_cmd():
     proj_root = PROJ_ROOT
     src_dir = proj_root / "src"
     csproj = next((src_dir / "MinLib").glob("*.csproj"))
-    before = csproj.read_text(encoding="utf-8")
     rc = cli.main(["bump", "1.0.0", str(src_dir / "MinLib")])
     assert rc == 0
     after = csproj.read_text(encoding="utf-8")

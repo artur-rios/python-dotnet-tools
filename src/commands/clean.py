@@ -10,7 +10,9 @@ Usage:
   python clean.py <path-to-src>  # cleans the provided directory
 """
 from __future__ import annotations
-import sys, pathlib, shutil
+import sys
+import pathlib
+import shutil
 
 
 def log(msg: str):

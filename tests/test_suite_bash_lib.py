@@ -12,7 +12,6 @@ import commands.bump as bump_cmd
 import commands.tag as tag_cmd
 import commands.init_proj as init_proj
 
-from conftest import CallLog
 
 MOCK_ROOT = pathlib.Path(__file__).parent / "mock"
 PROJ_ROOT: pathlib.Path | None = None

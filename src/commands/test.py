@@ -15,7 +15,11 @@ Test and report script:
   - Generate HTML coverage report using reportgenerator
 """
 from __future__ import annotations
-import sys, pathlib, shutil, subprocess, argparse
+import sys
+import pathlib
+import shutil
+import subprocess
+import argparse
 
 
 def log(msg: str):
