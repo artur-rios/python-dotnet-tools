@@ -117,6 +117,28 @@ class TestInitLib:
         fake_run.error = FileNotFoundError("git")
         assert init_lib._git_repo_url() == ""
 
+    def test_given_parameters_that_are_present_but_false_when_scaffolded_then_each_falls_back_to_its_default(
+            self, in_tmp, monkeypatch, fake_run):
+        """Every key must be present, but a JSON false or 0 still counts as no value."""
+        root = in_tmp / "Fallback"
+        params = {"RootFolder": str(root), "SolutionName": False, "ProjectName": 0, "Author": False,
+                  "Company": False, "Description": 0, "PackageId": False, "RepositoryUrl": False, "Version": "1.0.0"}
+        monkeypatch.setenv("GIT_AUTHOR_NAME", "Env Author")
+        assert init_lib.main(["init-lib", "--json", str(write_file(in_tmp / "p.json", json.dumps(params)))]) == 0
+
+        csproj = (root / "src" / "Fallback.csproj").read_text(encoding="utf-8")
+        assert (root / "src" / "Fallback.sln").is_file()
+        assert "<Authors>Env Author</Authors>" in csproj
+        assert "<PackageId>Fallback</PackageId>" in csproj
+        assert "<Description>Fallback library</Description>" in csproj
+        assert fake_run.calls == [["git", "remote", "get-url", "origin"]]
+
+    def test_given_broken_embedded_parameters_when_scaffolded_then_it_exits(self, in_tmp, monkeypatch, capsys):
+        monkeypatch.setattr(init_lib, "_read_text", lambda package, name: "{broken")
+        with exits_with(1):
+            init_lib.main(["init-lib", "--root", str(in_tmp / "x")])
+        assert "Failed to parse embedded parameters JSON" in capsys.readouterr().out
+
     @pytest.mark.parametrize("cli, json_value, expected", [("flag", "json", "flag"), (None, "json", "json"), (None, None, None)])
     def test_given_a_flag_and_a_parameter_when_coalesced_then_the_flag_wins(self, cli, json_value, expected):
         assert init_lib.coalesce(cli, json_value) == expected
@@ -183,3 +205,14 @@ class TestInitProj:
         (in_tmp / "Extra").mkdir()
         with exits_with(1):
             init_proj.main(["init-proj", "--name", str(in_tmp / "Extra")])
+
+
+def test_given_min_parameters_that_are_present_but_false_when_scaffolded_then_each_falls_back_to_its_default(
+        in_tmp, monkeypatch):
+    root = in_tmp / "Small"
+    params = {"RootFolder": str(root), "SolutionName": False, "ProjectName": 0, "Author": False, "Description": 0}
+    for name in ("GIT_AUTHOR_NAME", "USER", "USERNAME"):
+        monkeypatch.delenv(name, raising=False)
+    assert init_min.main(["init-min", "--json", str(write_file(in_tmp / "p.json", json.dumps(params)))]) == 0
+    assert (root / "src" / "Small" / "Small.csproj").is_file()
+    assert "Small library" in (root / "README.md").read_text(encoding="utf-8")
