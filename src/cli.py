@@ -21,7 +21,7 @@ def main(argv: list[str] | None = None) -> int:
     if cmd == "clean":
         return clean.main(["clean"] + rest)
     if cmd == "test":
-        return test.main()
+        return test.main(["test"] + rest)
     if cmd == "bump":
         return bump.main(["bump"] + rest)
     if cmd == "tag":

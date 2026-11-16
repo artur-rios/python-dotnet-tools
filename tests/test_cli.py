@@ -6,6 +6,7 @@ from unittest import mock
 import pytest
 
 import cli
+from conftest import write_file
 
 
 @pytest.mark.parametrize("argv", [[], ["-h"], ["--help"], ["help"]])
@@ -22,7 +23,7 @@ def test_given_an_unknown_command_when_dispatched_then_it_fails_with_the_usage(c
 
 
 @pytest.mark.parametrize("command, module", [
-    ("build", "build"), ("clean", "clean"), ("bump", "bump"), ("tag", "tag"),
+    ("build", "build"), ("clean", "clean"), ("test", "test"), ("bump", "bump"), ("tag", "tag"),
     ("init-lib", "init_lib"), ("init-min", "init_min"), ("init-proj", "init_proj"),
 ])
 def test_given_a_command_when_dispatched_then_its_main_gets_the_command_and_the_rest(command, module, monkeypatch):
@@ -32,11 +33,27 @@ def test_given_a_command_when_dispatched_then_its_main_gets_the_command_and_the_
     target.assert_called_once_with([command, "a", "--b"])
 
 
-def test_given_test_when_dispatched_then_commands_test_runs_with_no_arguments(monkeypatch):
-    target = mock.Mock(return_value=0)
-    monkeypatch.setattr(cli.test, "main", target)
-    assert cli.main(["test"]) == 0
-    target.assert_called_once_with()
+def test_given_the_console_script_running_test_without_a_path_when_dispatched_then_the_tests_folder_is_used(
+        in_tmp, fake_run, monkeypatch):
+    project = write_file(in_tmp / "tests" / "A.Tests" / "A.Tests.csproj")
+    monkeypatch.setattr(sys, "argv", ["python-dotnet-tools", "test"])
+
+    assert cli.main() == 0
+
+    assert fake_run.calls[0][:3] == ["dotnet", "test", str(project)]
+    assert fake_run.calls[0][-1] == str(in_tmp / "tests" / "TestResults")
+
+
+def test_given_the_console_script_running_test_with_a_path_when_dispatched_then_the_path_is_used(
+        in_tmp, fake_run, monkeypatch):
+    base = in_tmp / "elsewhere"
+    project = write_file(base / "X.Tests.csproj")
+    monkeypatch.setattr(sys, "argv", ["python-dotnet-tools", "test", str(base)])
+
+    assert cli.main() == 0
+
+    assert fake_run.calls[0][:3] == ["dotnet", "test", str(project.resolve())]
+    assert fake_run.calls[0][-1] == str(base.resolve() / "TestResults")
 
 
 def test_given_no_argv_when_dispatched_then_sys_argv_is_read(monkeypatch, capsys):
