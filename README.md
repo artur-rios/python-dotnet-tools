@@ -59,12 +59,9 @@ python-dotnet-tools/
 │     ├─ SOURCES.txt
 │     └─ top_level.txt
 └─ tests/
-  ├─ conftest.py
-  ├─ mock/
-  ├─ test_suite_bash_lib.py
-  ├─ test_suite_bash_min.py
-  ├─ test_suite_cmd_lib.py
-  └─ test_suite_cmd_min.py
+  ├─ conftest.py               # fake subprocess.run, working-directory and file helpers
+  ├─ test_build.py ... test_tag.py, test_init.py, test_cli.py   # unit tests, one file per command
+  └─ test_end_to_end.py        # the real dotnet, reportgenerator and git (marked e2e)
 ```
 
 ## Prerequisites
@@ -264,21 +261,21 @@ python-dotnet-tools build --help
 
 ## Tests
 
-Pytest-based tests live under `tests/`. The end-to-end suites run real external tools (`dotnet`, `reportgenerator`, `git`) and validate actual side effects (build outputs, cleaned folders, coverage artifacts, version bumps, and git tags).
+Pytest tests live under `tests/`, named `test_given_<context>_when_<action>_then_<outcome>`:
 
-### Test Suites Overview
+- **Unit tests**, one file per command (`test_build.py`, `test_clean.py`, `test_test_command.py`, `test_bump.py`,
+  `test_tag.py`, `test_init.py`) plus `test_cli.py` for the dispatcher. They fake `subprocess.run` and work in
+  pytest's temporary directories, so they need neither .NET nor git and run in about a second.
+- **End-to-end tests** (`test_end_to_end.py`, marked `e2e`): one `init-lib` and one `init-min` scaffold per run,
+  driven through the dispatcher and through the console-script entry points respectively, with the real `dotnet`,
+  `reportgenerator` and `git`. They are skipped when `dotnet` is not installed.
 
-- `test_suite_cmd_lib.py`: End-to-end via dispatcher `cli.main` using `init-lib`. Scaffolds a full repo under a unique mock path, then exercises `build`, `clean`, `test` (with coverage via `reportgenerator`), `bump` (version updates in `.csproj`), `tag` (annotated git tag from version), and `init-proj` (adds an extra minimal project). Validates created files, directories, coverage HTML, and git tag presence.
-- `test_suite_bash_lib.py`: End-to-end using direct command entrypoints (`commands.*.main`) with `init-lib`. Creates a unique mock repo, then directly calls `build`, `clean`, `test` with coverage, `bump`, `tag`, and `init-proj`. Asserts scaffold correctness, test/coverage outputs, version changes, and tag creation.
-- `test_suite_cmd_min.py`: End-to-end via dispatcher using `init-min` to scaffold a minimal repo. Adds a small xUnit tests project (with `coverlet.collector`) to enable coverage, then runs `build`, `clean`, `test` with coverage, `bump` (explicit version on minimal csproj), `tag`, and `init-proj`.
-- `test_suite_bash_min.py`: End-to-end using direct entrypoints with `init-min`. Similarly adds a tests project, then runs `build`, `clean`, `test`, `bump` (explicit version), `tag`, and `init-proj`, validating artifacts throughout.
-
-Run tests:
+Run them:
 
 ```pwsh
-python -m pip install -e .
-python -m pip install pytest
-pytest -q
+python -m pip install -e . pytest coverage
+pytest -m "not e2e"                  # the unit tests only
+coverage run -m pytest; coverage report   # everything, as the build check does, with its coverage floor
 ```
 
 ## Contributing

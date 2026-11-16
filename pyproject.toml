@@ -52,3 +52,23 @@ where = ["src"]
 # ruff's long-standing default rules, pyflakes (F) and pycodestyle's errors (E4, E7, E9), named so that a newer ruff
 # with a wider default set does not change what ci/lint.sh checks.
 select = ["E4", "E7", "E9", "F"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+# The sources, not an installed copy, so a checkout is tested as it is.
+pythonpath = ["src"]
+markers = [
+  "e2e: drives the real dotnet, reportgenerator and git (deselect with -m \"not e2e\")",
+]
+
+[tool.coverage.run]
+branch = true
+source = ["src"]
+# Not a package anything imports: pyproject maps the sources under src/ to top-level names.
+omit = ["src/__init__.py"]
+
+[tool.coverage.report]
+# The floor ci/build.sh enforces. Raise it when coverage rises; never lower it.
+fail_under = 95
+show_missing = true
+skip_covered = true
