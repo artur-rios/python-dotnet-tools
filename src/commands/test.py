@@ -70,10 +70,10 @@ def discover_tests_base(root: pathlib.Path) -> pathlib.Path:
     raise RuntimeError
 
 
-def parse_args():
+def parse_args(args: list[str] | None = None):
     parser = argparse.ArgumentParser(description="Run dotnet tests with coverage.")
     parser.add_argument('path', nargs='?', help="Optional base path to search for test projects and store results")
-    return parser.parse_args()
+    return parser.parse_args(args)
 
 
 def collect_test_projects(base: pathlib.Path) -> list[pathlib.Path]:
@@ -81,8 +81,11 @@ def collect_test_projects(base: pathlib.Path) -> list[pathlib.Path]:
     return [f for f in base.rglob('*.csproj') if f.is_file() and not is_setup_path(f)]
 
 
-def main() -> int:
-    args = parse_args()
+def main(argv: list[str] | None = None) -> int:
+    # Like the other commands, argv[0] is the program or command name (`python-dotnet-tools test` passes "test").
+    if argv is None:
+        argv = sys.argv
+    args = parse_args(argv[1:])
 
     log('[STEP] 1/6 Resolve paths')
     cwd = pathlib.Path.cwd()

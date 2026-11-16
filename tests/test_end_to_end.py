@@ -10,7 +10,6 @@ script's own entry point, so both ways in run for real once. Marked `e2e`:
 
 import shutil
 import subprocess
-import sys
 
 import pytest
 
@@ -73,13 +72,6 @@ def _commit_everything(root):
     _git(root, "commit", "-q", "-m", "init")
 
 
-def _run_test_command(root, monkeypatch, run):
-    """commands.test parses sys.argv itself, so it gets a clean one and the scaffold as cwd."""
-    monkeypatch.chdir(root)
-    monkeypatch.setattr(sys, "argv", ["python-dotnet-test"])
-    return run()
-
-
 def _bin_obj_dirs(root):
     return [p for p in root.rglob("*") if p.is_dir() and p.name in {"bin", "obj"}]
 
@@ -116,7 +108,8 @@ class TestLibraryThroughTheDispatcher:
 
     def test_given_a_test_project_when_tested_then_results_and_an_html_coverage_report_are_written(
             self, lib_root, monkeypatch):
-        assert _run_test_command(lib_root, monkeypatch, lambda: cli.main(["test"])) == 0
+        monkeypatch.chdir(lib_root)
+        assert cli.main(["test"]) == 0
         assert list((lib_root / "tests" / "TestResults").rglob("coverage.cobertura.xml"))
         assert (lib_root / "docs" / "coverage-report" / "index.htm").is_file()
 
@@ -156,7 +149,8 @@ class TestMinimalThroughTheEntryPoints:
 
     def test_given_a_test_project_when_tested_then_results_and_an_html_coverage_report_are_written(
             self, min_root, monkeypatch):
-        assert _run_test_command(min_root, monkeypatch, test_cmd.main) == 0
+        monkeypatch.chdir(min_root)
+        assert test_cmd.main(["python-dotnet-test"]) == 0
         assert list((min_root / "tests" / "TestResults").rglob("coverage.cobertura.xml"))
         assert (min_root / "docs" / "coverage-report" / "index.htm").is_file()
 
