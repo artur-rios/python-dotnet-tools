@@ -47,6 +47,13 @@ class TestInitLib:
         assert "<RepositoryUrl>https://example.test/acme.git</RepositoryUrl>" in csproj
         assert "__" not in csproj
 
+    def test_given_a_company_other_than_the_author_when_scaffolded_then_the_csproj_names_the_company(self, in_tmp):
+        root = in_tmp / "acme"
+        assert init_lib.main(["init-lib", "--root", str(root), *LIB_FLAGS]) == 0
+        csproj = (root / "src" / "Acme.Lib.Core.csproj").read_text(encoding="utf-8")
+        assert "<Authors>Ana</Authors>" in csproj
+        assert "<Company>Acme</Company>" in csproj
+
     def test_given_a_project_directly_under_src_when_scaffolded_then_the_solution_points_at_it(self, in_tmp):
         root = in_tmp / "acme"
         init_lib.main(["init-lib", "--root", str(root), *LIB_FLAGS])
@@ -129,6 +136,7 @@ class TestInitLib:
         csproj = (root / "src" / "Fallback.csproj").read_text(encoding="utf-8")
         assert (root / "src" / "Fallback.sln").is_file()
         assert "<Authors>Env Author</Authors>" in csproj
+        assert "<Company>Env Author</Company>" in csproj  # no company: the author's name
         assert "<PackageId>Fallback</PackageId>" in csproj
         assert "<Description>Fallback library</Description>" in csproj
         assert fake_run.calls == [["git", "remote", "get-url", "origin"]]
